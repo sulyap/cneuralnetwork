@@ -5,8 +5,9 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 
-# ignore binary
+# ignore binaries
 cneuralnetwork
+xor_example
 
 # ignore vim swp files
 *.swp
