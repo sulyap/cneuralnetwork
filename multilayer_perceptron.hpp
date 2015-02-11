@@ -10,6 +10,7 @@
 using namespace std;
 
 #include "layer.hpp"
+#include "training_data.hpp"
 
 class MultilayerPerceptron
 {
@@ -40,9 +41,11 @@ public:
   double recentAverageError;
   double recentAverageSmoothingFactor;
 
+
 private:
   vector<int> topology;       // topology of this network
   vector<Layer> layers;       // collection of layers
+  TrainingData trainingData;  // training data object
 };
 
 #endif

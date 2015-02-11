@@ -8,6 +8,8 @@ install_manifest.txt
 # ignore binaries
 cneuralnetwork
 xor_example
+training_data_example
+train_data
 
 # ignore vim swp files
 *.swp
