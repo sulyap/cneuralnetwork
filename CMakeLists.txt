@@ -13,5 +13,3 @@ add_executable(train_data train_data.cpp training_data.cpp multilayer_perceptron
 # XOR training example
 add_executable(xor_example xor_example.cpp multilayer_perceptron.cpp neuron.cpp weight.cpp layer.cpp training_data.cpp)
 
-# Main application
-add_executable(cneuralnetwork main.cpp multilayer_perceptron.cpp neuron.cpp weight.cpp layer.cpp training_data.cpp)

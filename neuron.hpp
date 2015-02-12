@@ -57,7 +57,9 @@ public:
   // Bias - Extra with constant 1 as its value
   // Input - Accepts only one value
   // Hidden - Accepts multiple inputs
-  Neuron(bool flagBias, bool flagInput, bool flagHidden, int numOutputs, int id);
+  // eta - magnifying factor
+  // alpha - momentum
+  Neuron(bool flagBias, bool flagInput, bool flagHidden, int numOutputs, int id, double eta, double alpha);
 
   double outputValue;           // the output value of this neuron
   bool flagBias;                // flag for bias neuron
@@ -69,8 +71,8 @@ public:
 
   double gradient;
 
-  static double eta;  // [0,1]
-  static double alpha;
+  double eta;  // [0,1]
+  double alpha;
 private:
   int id;                       // the id of this neuron
 };

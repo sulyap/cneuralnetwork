@@ -3,12 +3,11 @@
 /*
   CONSTRUCTOR
 */
-MultilayerPerceptron::MultilayerPerceptron(vector<int> topology)
+MultilayerPerceptron::MultilayerPerceptron(vector<int> topology, double eta, double alpha)
 {
   setTopology(topology);
 
   int num_layers = topology.size();
-
 
   for(int i = 0; i < num_layers; i++) {
     this->layers.push_back(Layer()); 
@@ -34,8 +33,55 @@ MultilayerPerceptron::MultilayerPerceptron(vector<int> topology)
         isHidden = true;
       }
 
-      this->layers.back().addNeuron(Neuron(isBias, isInput, isHidden, num_outputs, neuron_num));
+      this->layers.back().addNeuron(Neuron(isBias, isInput, isHidden, num_outputs, neuron_num, eta, alpha));
     }
+  }
+}
+
+/*
+  TRAIN
+  - only limited to binary classification (i.e. targets only one output neuron
+*/
+void MultilayerPerceptron::train(TrainingData trainingData, int epoch = 100)
+{
+  setTrainingData(trainingData);
+
+  double hits = 0;
+  vector<vector<double> > dataset = trainingData.trainingData;
+  vector<double> labels = trainingData.labels;
+
+  for(int i = 0; i < epoch; i++) {
+    cout << "Epoch " << i << "-> ";
+    double positiveHits = 0;
+    double negativeHits = 0;
+
+    for(int j = 0; j < dataset.size(); j++) {
+      vector<double> inputVals;
+      for(int c = 0; c < dataset.at(j).size(); c++) {
+        inputVals.push_back(dataset.at(j).at(c));
+      }
+
+      vector<double> targetVals;
+      targetVals.push_back(labels.at(j));
+
+      this->feedForward(inputVals);
+      this->backPropagation(targetVals);
+
+      vector<double> results = this->getResults();
+      for(int t = 0; t < results.size(); t++) {
+        if(targetVals.at(t) == 1 and results.at(t) > 0.5) {
+          positiveHits += 1;
+        }
+
+        if(targetVals.at(t) == 0 and results.at(t) <= 0.5) {
+          negativeHits += 1;
+        }
+      }
+    }
+
+    double totalHits = positiveHits + negativeHits;
+    double rate = 100 * (totalHits / dataset.size());
+    cout << "RATE: " << rate << endl;
   }
 }
 

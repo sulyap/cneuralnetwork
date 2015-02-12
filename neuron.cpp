@@ -1,7 +1,7 @@
 #include "neuron.hpp"
 
 // Constructor
-Neuron::Neuron(bool flagBias, bool flagInput, bool flagHidden, int numOutputs, int id)
+Neuron::Neuron(bool flagBias, bool flagInput, bool flagHidden, int numOutputs, int id, double eta, double alpha)
 {
   setFlagBias(flagBias);
   setFlagInput(flagInput);
@@ -19,6 +19,9 @@ Neuron::Neuron(bool flagBias, bool flagInput, bool flagHidden, int numOutputs, i
   } else {
     setOutputValue(0);
   }
+
+  this->eta = eta;
+  this->alpha = alpha;
 }
 
 // Random weight generator
@@ -44,13 +47,15 @@ double Neuron::randomWeight()
 // NOTE: Make sure to scale values that are acceptible by tanh
 double Neuron::transferFunction(double x)
 {
-  return tanh(x);
+  //return tanh(x);
+  return 1 / (1 + exp(-x));
 }
 
 // Drivative of transfer function
 double Neuron::transferFunctionDerivative(double x)
 {
-  return 1.0 - x * x;
+  //return 1.0 - x * x;
+  return x * (1 - x);
 }
 
 // Feed forward operation for a neuron
@@ -90,9 +95,6 @@ double Neuron::sumDOW(vector<Neuron> nextLayerNeurons)
 
   return sum;
 }
-
-double Neuron::eta = 0.15;
-double Neuron::alpha = 0.5;
 
 void Neuron::updateInputWeights(vector<Neuron> &previousLayerNeurons) {
   // Weights are updated in neurons in the preceeding layer including bias

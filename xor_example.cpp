@@ -14,6 +14,9 @@ using namespace std;
 
 using namespace std;
 
+double eta = 0.15;
+double alpha = 0.5;
+
 int main(int argc, char **argv)
 {
   vector<int> topology;
@@ -22,7 +25,7 @@ int main(int argc, char **argv)
   topology.push_back(4);
   topology.push_back(4);
   topology.push_back(1);
-  MultilayerPerceptron network(topology);
+  MultilayerPerceptron network(topology, eta, alpha);
 
   int epoch = 1000;
   for(int i = 0; i < epoch; i++) {
