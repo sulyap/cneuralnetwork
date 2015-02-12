@@ -14,6 +14,7 @@
 using namespace std;
 
 int epoch;
+int num_layers;
 double eta;
 double alpha;
 string csv_file;
@@ -21,12 +22,12 @@ string output_file;
 
 void syntax()
 {
-  cout << "train_data [csv_file] [output_file] [eta] [alpha] [epoch]" << endl;
+  cout << "train_data [csv_file] [output_file] [eta] [alpha] [epoch] [num_layers]" << endl;
 }
 
 int main(int argc, char **argv)
 {
-  if(argc != 6) {
+  if(argc != 7) {
     syntax();
     exit(-1);
   }
@@ -39,11 +40,23 @@ int main(int argc, char **argv)
   cout << "ALPHA: " << alpha << endl;
   epoch = atoi(argv[5]);
   cout << "EPOCH: " << epoch << endl;
+  num_layers = atoi(argv[6]);
+  cout << "NUM LAYERS: " << num_layers << endl;
 
+  // Build neuron count for each layer
   vector<int> topology;
-  topology.push_back(24);
-  topology.push_back(25);
-  topology.push_back(1);
+  for(int i = 0; i < num_layers; i++) {
+    int neuron_count;
+    if(i == 0) {
+      cout << "[Layer " << i + 1 << " Input] Neuron count: ";
+    } else if(i == num_layers - 1) {
+      cout << "[Layer " << i + 1 << " Output] Neuron count: ";
+    } else {
+      cout << "[Layer " << i + 1 << " Hidden] Neuron count: ";
+    }
+    cin >> neuron_count;
+    topology.push_back(neuron_count);
+  }
 
   TrainingData td(argv[1]);
 
