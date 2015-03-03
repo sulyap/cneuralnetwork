@@ -46,11 +46,23 @@ public:
   // method for training. requires an instance of TrainingData to be passed
   void train(TrainingData trainingData, int epoch);
 
+  // save to configuration to file
+  /* Format:
+  minVal=min
+  maxVal=max
+  topology={n1,weight1,0},{n2,weight,0}|{n1,weight1,0},{n2,weight2,0}
+  */
+  void save(string filename);
+
+  double predict(vector<double> inputVals);
+
 private:
   vector<int> topology;       // topology of this network
   vector<Layer> layers;       // collection of layers
   TrainingData trainingData;  // training data object
   int epoch;                  // epoch value for training
+  double minVal;              // min val for normalization
+  double maxVal;              // max val for normalization
 };
 
 #endif

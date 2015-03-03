@@ -19,15 +19,18 @@ double eta;
 double alpha;
 string csv_file;
 string output_file;
+string validation_file;
+vector<vector<double> > validation_data;
+vector<double> labels;
 
 void syntax()
 {
-  cout << "train_data [csv_file] [output_file] [eta] [alpha] [epoch] [num_layers]" << endl;
+  cout << "train_data [csv_file] [output_file] [eta] [alpha] [epoch] [num_layers] [validation_file]" << endl;
 }
 
 int main(int argc, char **argv)
 {
-  if(argc != 7) {
+  if(argc != 8) {
     syntax();
     exit(-1);
   }
@@ -62,6 +65,56 @@ int main(int argc, char **argv)
 
   MultilayerPerceptron *mp = new MultilayerPerceptron(topology, eta, alpha);
   mp->train(td, epoch);
+
+  // Validation
+  ifstream file(argv[7]);
+  string line;
+
+  vector<vector<double> > buffData;
+  while(getline(file, line)) {
+    vector<double> dataLine;
+
+    std::istringstream iss(line);
+    std::string result;
+    while(std::getline(iss, result, ',')) {
+      dataLine.push_back(stod(result));
+    }
+
+    buffData.push_back(dataLine);
+  }
+
+  for(int i = 0; i < buffData.size(); i++) {
+    vector<double> training_data_vector;
+    for(int j = 0; j < buffData.at(i).size() - 1; j++) {
+      training_data_vector.push_back(buffData.at(i).at(j));
+    }
+    
+    validation_data.push_back(training_data_vector);
+    labels.push_back(buffData.at(i).at(buffData.at(i).size() - 1));
+  }
+
+  int positiveHits = 0;
+  int negativeHits = 0;
+
+  for(int i = 0; i < validation_data.size(); i++) {
+    double result = mp->predict(validation_data.at(i));
+    double expected = labels.at(i);
+    cout << "Result: " << result << " Expected: " << expected << endl;
+    if(result > 0.5 and expected == 1) {
+      positiveHits++;
+    }
+
+    if(result <= 0.5 and expected == 0) {
+      negativeHits++;
+    }
+  }
+
+  int totalHits = positiveHits + negativeHits;
+  double accuracy = (double)totalHits / (double)validation_data.size();
+  
+  cout << "Final accuracy: " << accuracy * 100 << "%" << endl;
+
+  mp->save(output_file);
 
   return 0;
 }

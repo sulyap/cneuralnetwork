@@ -65,7 +65,6 @@ void MultilayerPerceptron::train(TrainingData trainingData, int epoch = 100)
       targetVals.push_back(labels.at(j));
 
       this->feedForward(inputVals);
-      this->backPropagation(targetVals);
 
       vector<double> results = this->getResults();
       for(int t = 0; t < results.size(); t++) {
@@ -77,11 +76,12 @@ void MultilayerPerceptron::train(TrainingData trainingData, int epoch = 100)
           negativeHits += 1;
         }
       }
+      this->backPropagation(targetVals);
     }
 
     double totalHits = positiveHits + negativeHits;
     double rate = 100 * (totalHits / dataset.size());
-    cout << "RATE: " << rate << endl;
+    cout << "RATE: " << rate << " OVERALL NET ERROR: " << overallNetError << endl;
   }
 }
 
@@ -199,4 +199,50 @@ vector<double> MultilayerPerceptron::getResults()
   }
 
   return resultVals;
+}
+
+/*
+  PREDICTION
+*/
+double MultilayerPerceptron::predict(vector<double> inputVals)
+{
+  feedForward(inputVals);
+
+  return getResults().at(0);
+}
+
+/*
+  SAVE
+  Description: Saves a simple config file containing the following format:
+  ==============
+  
+  MIN_VAL=minVal
+  MAX_VAL=maxVal
+  TOPOLOGY=3,2,1
+  
+  ==============
+  each {} in topology represents a neuron with id, weight and is_bias flag. 0 for normal neuron and 1 for bias
+*/
+void MultilayerPerceptron::save(string filename)
+{
+  // Open file
+  std::ofstream out(filename);
+
+  for(int layer_index = 0; layer_index < layers.size(); layer_index++) {
+    cout << "layer:" << layer_index << endl;
+    out << "layer:" << layer_index << endl;
+    for(int neuron_index = 0; neuron_index < layers.at(layer_index).neurons.size(); neuron_index++) {
+      cout << "n" << neuron_index << ":";
+      out << "n" << neuron_index << ":";
+      for(int w_index = 0; w_index < layers.at(layer_index).neurons.at(neuron_index).outputWeights.size(); w_index++) {
+        cout << layers.at(layer_index).neurons.at(neuron_index).outputWeights.at(w_index).value << " ";
+        out << layers.at(layer_index).neurons.at(neuron_index).outputWeights.at(w_index).value << " ";
+      }
+      cout << endl;
+      out << endl;
+    }
+  }
+
+  // Close file
+  out.close();
 }
